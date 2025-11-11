@@ -2,7 +2,16 @@
 
 csv_url="https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-LX0117EN-SkillsNetwork/labs/M3/L2/arrays_table.csv"
 data_file="arrays_table.csv"
-curl -L "$csv_url" -o "$data_file"
+
+# Download the CSV file using wget (or curl as fallback)
+if command -v wget >/dev/null 2>&1; then
+    wget "$csv_url" -O "$data_file"
+elif command -v curl >/dev/null 2>&1; then
+    curl -L "$csv_url" -o "$data_file"
+else
+    echo "Error: Neither wget nor curl is available. Please install one of them."
+    exit 1
+fi
 
 # parse table columns into 3 arrays
 column_0=($(cut -d "," -f 1 "$data_file"))
