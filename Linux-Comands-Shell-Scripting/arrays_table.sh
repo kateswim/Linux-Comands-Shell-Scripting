@@ -1,6 +1,7 @@
 #!/bin/bash
 
-csv_file="./arrays_table.csv"
+csv_file="https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-LX0117EN-SkillsNetwork/labs/M3/L2/arrays_table.csv"
+wget $csv_file
 
 # parse table columns into 3 arrays
 column_0=($(cut -d "," -f 1 $csv_file))
@@ -27,6 +28,7 @@ echo "${column_3[@]}"
 # first write the new array to file
 # initialize the file with a header
 echo "${column_3[0]}" > column_3.txt
+
 for ((i=1; i<nlines; i++)); do
   echo "${column_3[$i]}" >> column_3.txt
 done
