@@ -23,4 +23,4 @@ year=$(TZ='Canada/Surrey' date +%Y)
 
 
 record=$(echo -e "$year\t$month\t$day\t$obs_temp\t$fc_temp C")
-echo $record>>rx_poc.log
+echo -e "$record" >> rx_poc.log
