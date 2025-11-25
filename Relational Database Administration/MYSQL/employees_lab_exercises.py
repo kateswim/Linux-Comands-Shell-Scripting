@@ -42,15 +42,15 @@ def run_query_with_timing(cursor, query, description):
     
     rows = cursor.fetchall()
     
-    print(f"✅ Executed in {elapsed:.4f} seconds")
-    print(f"📊 Rows returned: {len(rows)}")
+    print(f"[OK] Executed in {elapsed:.4f} seconds")
+    print(f"[INFO] Rows returned: {len(rows)}")
     if rows and len(rows) <= 10:
         for row in rows:
-            print(f"   {row}")
+            print(f"       {row}")
     elif rows:
-        print(f"   (showing first 10 of {len(rows)} rows)")
+        print(f"       (showing first 10 of {len(rows)} rows)")
         for row in rows[:10]:
-            print(f"   {row}")
+            print(f"       {row}")
     
     return elapsed
 
@@ -76,10 +76,10 @@ def explain_query(cursor, query, description):
     for row in rows:
         print(" | ".join(f"{str(val):15}" for val in row))
     
-    print("\n📌 Key points to look for:")
-    print("   - 'key': Which index is used (NULL = no index)")
-    print("   - 'rows': Estimated rows examined")
-    print("   - 'Extra': Using index, Using where, etc.")
+    print("\n[INFO] Key points to look for:")
+    print("       - 'key': Which index is used (NULL = no index)")
+    print("       - 'rows': Estimated rows examined")
+    print("       - 'Extra': Using index, Using where, etc.")
 
 # ---------- Lab Exercises ----------
 
@@ -118,12 +118,12 @@ def exercise_2_add_index():
     """)
     
     if cursor.fetchone():
-        print("\n✅ Index idx_last_name already exists.")
+        print("\n[OK] Index idx_last_name already exists.")
     else:
-        print("\n🔧 Creating index on last_name column...")
+        print("\n[ACTION] Creating index on last_name column...")
         cursor.execute("ALTER TABLE employees ADD INDEX idx_last_name (last_name);")
         conn.commit()
-        print("✅ Index created successfully.")
+        print("[OK] Index created successfully.")
     
     # Now re-run EXPLAIN to see the improvement
     query = """
@@ -150,12 +150,12 @@ def exercise_3_selective_columns():
     print(f"{'='*70}")
     
     # Bad: SELECT *
-    print("\n❌ BAD: SELECT * (retrieves all columns)")
+    print("\n[WARNING] BAD: SELECT * (retrieves all columns)")
     query_bad = "SELECT * FROM employees WHERE emp_no < 10010 LIMIT 3;"
     run_query_with_timing(cursor, query_bad, "SELECT all columns")
     
     # Good: SELECT specific columns
-    print("\n✅ GOOD: SELECT specific columns (emp_no, first_name, last_name)")
+    print("\n[GOOD] GOOD: SELECT specific columns (emp_no, first_name, last_name)")
     query_good = """
     SELECT emp_no, first_name, last_name 
     FROM employees 
@@ -190,7 +190,7 @@ def exercise_4_union_all():
     WHERE emp_no IN (10004, 10005, 10006);
     """
     
-    print("\n✅ Using UNION ALL (faster - no duplicate removal)")
+    print("\n[GOOD] Using UNION ALL (faster - no duplicate removal)")
     run_query_with_timing(cursor, query_union_all, "UNION ALL example")
     
     cursor.close()
@@ -214,7 +214,7 @@ def exercise_5_filtering_optimization():
     print(f"\nTotal employees in database: {total}")
     
     # Bad: Filter after retrieval
-    print("\n❌ BAD: Retrieve and filter in application")
+    print("\n[WARNING] BAD: Retrieve and filter in application")
     query_bad = """
     SELECT emp_no, first_name, last_name 
     FROM employees 
@@ -222,7 +222,7 @@ def exercise_5_filtering_optimization():
     """
     print(query_bad)
     cursor.execute(query_bad)
-    print(f"✅ Rows matching condition: {len(cursor.fetchall())}")
+    print(f"[OK] Rows matching condition: {len(cursor.fetchall())}")
     
     # Show EXPLAIN to understand index usage
     explain_query(cursor, query_bad, "Filter on birth_date (is there an index?)")
@@ -257,12 +257,12 @@ def exercise_6_advanced_explain():
         cursor.execute(explain_json_query)
         result = cursor.fetchone()[0]
         print(result)
-        print("\n📌 This shows detailed query execution plan including:")
-        print("   - Join type (inner, left, etc.)")
-        print("   - Index usage per table")
-        print("   - Estimated cost")
+        print("\n[INFO] This shows detailed query execution plan including:")
+        print("       - Join type (inner, left, etc.)")
+        print("       - Index usage per table")
+        print("       - Estimated cost")
     except Error as e:
-        print(f"⚠️  JSON format may not be available: {e}")
+        print(f"[WARNING] JSON format may not be available: {e}")
         # Fallback to standard EXPLAIN
         explain_query(cursor, query, "JOIN query")
     
@@ -291,12 +291,12 @@ if __name__ == "__main__":
         try:
             func()
         except Error as e:
-            print(f"\n❌ Exercise {i} error: {e}")
+            print(f"\n[ERROR] Exercise {i} error: {e}")
         except Exception as e:
-            print(f"\n❌ Unexpected error in Exercise {i}: {e}")
+            print(f"\n[ERROR] Unexpected error in Exercise {i}: {e}")
     
     print("\n")
     print("╔" + "="*68 + "╗")
-    print("║" + " "*20 + "✅ Lab Complete!" + " "*33 + "║")
+    print("║" + " "*20 + "[OK] Lab Complete!" + " "*31 + "║")
     print("╚" + "="*68 + "╝")
     print("\n")

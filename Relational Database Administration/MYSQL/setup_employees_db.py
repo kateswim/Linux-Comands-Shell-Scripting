@@ -28,37 +28,37 @@ SQL_FILE = f"{EXTRACT_DIR}/employees.sql"
 def download_database(url, filename):
     """Download the employees database zip file."""
     if Path(filename).exists():
-        print(f"✅ {filename} already exists, skipping download.")
+        print(f"[OK] {filename} already exists, skipping download.")
         return True
     
-    print(f"📥 Downloading database from {url}...")
+    print(f"[DOWNLOAD] Downloading database from {url}...")
     try:
         urllib.request.urlretrieve(url, filename)
-        print(f"✅ Downloaded {filename}")
+        print(f"[OK] Downloaded {filename}")
         return True
     except Exception as e:
-        print(f"❌ Download failed: {e}")
+        print(f"[ERROR] Download failed: {e}")
         return False
 
 def extract_database(zip_file, extract_to):
     """Extract the zip file."""
     if Path(extract_to).exists():
-        print(f"✅ {extract_to} already exists, skipping extraction.")
+        print(f"[OK] {extract_to} already exists, skipping extraction.")
         return True
     
-    print(f"📦 Extracting {zip_file}...")
+    print(f"[EXTRACT] Extracting {zip_file}...")
     try:
         with zipfile.ZipFile(zip_file, 'r') as zip_ref:
             zip_ref.extractall()
-        print(f"✅ Extracted to {extract_to}")
+        print(f"[OK] Extracted to {extract_to}")
         return True
     except Exception as e:
-        print(f"❌ Extraction failed: {e}")
+        print(f"[ERROR] Extraction failed: {e}")
         return False
 
 def create_database(host, port, user, password):
     """Create the employees database if it doesn't exist."""
-    print(f"🗄️  Creating database '{DB_NAME}' if it doesn't exist...")
+    print(f"[INFO] Creating database '{DB_NAME}' if it doesn't exist...")
     
     cmd = [
         'mysql',
@@ -75,27 +75,27 @@ def create_database(host, port, user, password):
     try:
         result = subprocess.run(cmd, env=env, capture_output=True, text=True)
         if result.returncode == 0:
-            print(f"✅ Database '{DB_NAME}' is ready.")
+            print(f"[OK] Database '{DB_NAME}' is ready.")
             return True
         else:
-            print(f"❌ Error creating database: {result.stderr}")
+            print(f"[ERROR] Error creating database: {result.stderr}")
             return False
     except FileNotFoundError:
-        print("❌ Error: mysql command not found!")
-        print("   Please install MySQL client: brew install mysql")
+        print("[ERROR] Error: mysql command not found!")
+        print("        Please install MySQL client: brew install mysql")
         return False
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         return False
 
 def import_sql_file(sql_file, host, port, user, password, db_name):
     """Import the SQL file into MySQL."""
     if not Path(sql_file).exists():
-        print(f"❌ Error: {sql_file} not found!")
+        print(f"[ERROR] Error: {sql_file} not found!")
         return False
     
-    print(f"⏳ Importing {sql_file} into database '{db_name}'...")
-    print("   This may take 1-2 minutes...")
+    print(f"[IMPORT] Importing {sql_file} into database '{db_name}'...")
+    print("         This may take 1-2 minutes...")
     
     cmd = [
         'mysql',
@@ -114,24 +114,24 @@ def import_sql_file(sql_file, host, port, user, password, db_name):
             result = subprocess.run(cmd, stdin=f, env=env, capture_output=True, text=True)
         
         if result.returncode == 0:
-            print("✅ Database imported successfully!")
+            print("[OK] Database imported successfully!")
             if result.stdout:
                 print("Output:")
                 print(result.stdout[:500])  # Print first 500 chars
             return True
         else:
-            print(f"❌ Import error: {result.stderr[:500]}")
+            print(f"[ERROR] Import error: {result.stderr[:500]}")
             return False
     except FileNotFoundError:
-        print("❌ Error: mysql command not found!")
+        print("[ERROR] Error: mysql command not found!")
         return False
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         return False
 
 def verify_import(host, port, user, password, db_name):
     """Verify the database was imported correctly."""
-    print(f"\n✔️  Verifying import...")
+    print(f"\n[VERIFY] Verifying import...")
     
     cmd = [
         'mysql',
@@ -153,10 +153,10 @@ def verify_import(host, port, user, password, db_name):
             print(result.stdout)
             return True
         else:
-            print(f"❌ Verification error: {result.stderr}")
+            print(f"[ERROR] Verification error: {result.stderr}")
             return False
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         return False
 
 # ---------- Main ----------
@@ -199,7 +199,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     print("\n" + "=" * 70)
-    print("✅ Setup Complete!")
+    print("[OK] Setup Complete!")
     print("=" * 70)
     print(f"\nNext steps:")
     print(f"1. Connect to MySQL: mysql -h {MYSQL_HOST} -u {MYSQL_USER} {DB_NAME}")
