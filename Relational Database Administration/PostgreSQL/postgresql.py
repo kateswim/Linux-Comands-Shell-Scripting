@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2 import Error
 
 # ---------- Connection settings ----------
 DB_CONFIG = {
@@ -10,18 +11,32 @@ DB_CONFIG = {
 }
 
 def get_connection():
-    return psycopg2.connect(**DB_CONFIG)
+    """Get PostgreSQL database connection"""
+    try:
+        conn = psycopg2.connect(**DB_CONFIG)
+        return conn
+    except Error as e:
+        print(f"Error connecting to PostgreSQL: {e}")
+        return None
 
 # ---------- Query flights data ----------
 def get_flight_count():
     """Get total number of flights"""
     sql = "SELECT COUNT(*) FROM bookings.flights;"
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql)
-            count = cur.fetchone()[0]
-    print(f"Total flights: {count}")
-    return count
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                count = cur.fetchone()[0]
+            print(f"Total flights: {count}")
+            return count
+        except Error as e:
+            print(f"Error executing query: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
 
 # ---------- Get flights by route ----------
 def get_flights_by_route(departure_airport, arrival_airport, limit=10):
@@ -33,14 +48,22 @@ def get_flights_by_route(departure_airport, arrival_airport, limit=10):
     ORDER BY scheduled_departure
     LIMIT %s;
     """
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql, (departure_airport, arrival_airport, limit))
-            rows = cur.fetchall()
-    print(f"\nFlights from {departure_airport} to {arrival_airport}:")
-    for row in rows:
-        print(f"  {row[0]} | {row[1]} | {row[2]} | {row[3]}")
-    return rows
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, (departure_airport, arrival_airport, limit))
+                rows = cur.fetchall()
+            print(f"\nFlights from {departure_airport} to {arrival_airport}:")
+            for row in rows:
+                print(f"  {row[0]} | {row[1]} | {row[2]} | {row[3]}")
+            return rows
+        except Error as e:
+            print(f"Error executing query: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
 
 # ---------- Get airports ----------
 def list_airports(limit=20):
@@ -51,25 +74,41 @@ def list_airports(limit=20):
     ORDER BY city
     LIMIT %s;
     """
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql, (limit,))
-            rows = cur.fetchall()
-    print(f"\nAirports (showing {len(rows)}):")
-    for row in rows:
-        print(f"  {row[0]} | {row[1]} | {row[2]}")
-    return rows
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, (limit,))
+                rows = cur.fetchall()
+            print(f"\nAirports (showing {len(rows)}):")
+            for row in rows:
+                print(f"  {row[0]} | {row[1]} | {row[2]}")
+            return rows
+        except Error as e:
+            print(f"Error executing query: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
 
 # ---------- Get bookings count ----------
 def get_bookings_count():
     """Get total number of bookings"""
     sql = "SELECT COUNT(*) FROM bookings.bookings;"
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql)
-            count = cur.fetchone()[0]
-    print(f"Total bookings: {count:,}")
-    return count
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                count = cur.fetchone()[0]
+            print(f"Total bookings: {count:,}")
+            return count
+        except Error as e:
+            print(f"Error executing query: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
 
 # ---------- Get recent flights ----------
 def get_recent_flights(limit=10):
@@ -81,14 +120,22 @@ def get_recent_flights(limit=10):
     ORDER BY scheduled_departure DESC
     LIMIT %s;
     """
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(sql, (limit,))
-            rows = cur.fetchall()
-    print(f"\nRecent flights (showing {len(rows)}):")
-    for row in rows:
-        print(f"  {row[0]} | {row[1]} → {row[2]} | {row[3]} | {row[4]} | {row[5]}")
-    return rows
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, (limit,))
+                rows = cur.fetchall()
+            print(f"\nRecent flights (showing {len(rows)}):")
+            for row in rows:
+                print(f"  {row[0]} | {row[1]} → {row[2]} | {row[3]} | {row[4]} | {row[5]}")
+            return rows
+        except Error as e:
+            print(f"Error executing query: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
 
 if __name__ == "__main__":
     print("=" * 60)

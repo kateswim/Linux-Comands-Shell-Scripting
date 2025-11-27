@@ -67,14 +67,14 @@ def execute_sql_file(sql_file_path):
                 if sql_block.strip():
                     execute_sql_statements(conn, sql_block)
         
-        print("\n✅ SQL file executed successfully!")
+        print("\nSQL file executed successfully!")
         return True
         
     except psycopg2.Error as e:
-        print(f"\n❌ Database error: {e}")
+        print(f"\nDatabase error: {e}")
         return False
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")
         return False
     finally:
         if conn:
@@ -182,7 +182,7 @@ def open_from_string(data_string):
 if __name__ == "__main__":
     # Update password before running!
     if DB_CONFIG["password"] == "your_password_here":
-        print("⚠️  Please update the password in DB_CONFIG before running!")
+        print("WARNING: Please update the password in DB_CONFIG before running!")
         print("   Edit this file and set DB_CONFIG['password'] to your PostgreSQL password.")
         sys.exit(1)
     
