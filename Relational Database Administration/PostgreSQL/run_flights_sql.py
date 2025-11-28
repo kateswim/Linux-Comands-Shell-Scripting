@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script to execute flights.sql PostgreSQL dump file.
-This script handles \connect commands and COPY FROM stdin statements.
+This script handles \\connect commands and COPY FROM stdin statements.
 """
 
 import psycopg2
@@ -20,7 +20,7 @@ DB_CONFIG = {
 
 def execute_sql_file(sql_file_path):
     """
-    Execute a PostgreSQL dump file that may contain \connect commands.
+    Execute a PostgreSQL dump file that may contain \\connect commands.
     """
     sql_file = Path(sql_file_path)
     if not sql_file.exists():
