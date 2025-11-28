@@ -24,7 +24,7 @@ def run_sql_file_with_psql(sql_file_path):
     sql_file = Path(sql_file_path)
     
     if not sql_file.exists():
-        print(f"❌ Error: File {sql_file_path} not found!")
+        print(f" Error: File {sql_file_path} not found!")
         return False
     
     # Set PGPASSWORD environment variable for password authentication (only if password is provided)
@@ -56,13 +56,13 @@ def run_sql_file_with_psql(sql_file_path):
         )
         
         if result.returncode == 0:
-            print("✅ SQL file executed successfully!")
+            print(" SQL file executed successfully!")
             if result.stdout:
                 print("\nOutput:")
                 print(result.stdout)
             return True
         else:
-            print("❌ Error executing SQL file:")
+            print(" Error executing SQL file:")
             print(result.stderr)
             if result.stdout:
                 print("\nOutput:")
@@ -70,13 +70,13 @@ def run_sql_file_with_psql(sql_file_path):
             return False
             
     except FileNotFoundError:
-        print("❌ Error: psql command not found!")
+        print(" Error: psql command not found!")
         print("   Please make sure PostgreSQL client tools are installed.")
         print("   On macOS: brew install postgresql")
         print("   On Ubuntu: sudo apt-get install postgresql-client")
         return False
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f" Error: {e}")
         return False
 
 if __name__ == "__main__":
